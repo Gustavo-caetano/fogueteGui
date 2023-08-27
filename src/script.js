@@ -102,7 +102,7 @@ class MQTTClient {
     }
 }
 
-const wsbroker = "100.68.1.179";
+const wsbroker = "10.5.0.5";
 const wsport = 15675;
 const username = "gustavo";
 const password = "3141516";
