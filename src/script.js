@@ -79,6 +79,9 @@ class MQTTClient {
 
     onConnectionLost(responseObject) {
         console.error("CONNECTION LOST - " + responseObject.errorMessage);
+        setTimeout(() => {
+            this.connect();
+        }, 500);
     }
 
     onMessageArrived(message) {
