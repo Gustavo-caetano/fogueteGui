@@ -2,9 +2,10 @@
   "name": "foguetegui",
   "version": "1.0.0",
   "description": "interface grafica para testes de foguete",
-  "main": "index.js",
+  "main": "script.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node src/script.js"
   },
   "author": "",
   "license": "ISC",
