@@ -1,42 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dynamic Chart with Highest Value</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/paho-mqtt/1.0.1/mqttws31.min.js"></script>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f4f4f4;
-        }
-
-        #highestValue {
-            text-align: center;
-            font-size: 24px;
-            margin-bottom: 20px;
-        }
-
-        #myChart {
-            border: 2px solid #ccc;
-            background-color: #fff;
-            min-width: 800px;
-            max-width: 1000px;
-            margin: 0 auto;
-        }
-    </style>
+  <title>Socket.IO Chat</title>
 </head>
 <body>
-    <div id="highestValue">Highest Value: <span id="maxValue">0</span></div>
-    <canvas id="myChart"></canvas>
+  <ul id="messages"></ul>
+  <form id="form" action="">
+    <input id="input" autocomplete="off" /><button>Enviar</button>
+  </form>
 
-    <script type="module" src="./script.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
+  <script>
+    const socket = io();
+
+    // Manipulador para o formulário de envio
+    document.getElementById('form').addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = document.getElementById('input');
+      const message = input.value;
+      socket.emit('chat message', message);
+      input.value = '';
+      return false;
+    });
+
+    // Manipulador para o evento "chat message"
+    socket.on('chat message', (msg) => {
+      const messages = document.getElementById('messages');
+      const li = document.createElement('li');
+      li.textContent = msg;
+      messages.appendChild(li);
+    });
+  </script>
 </body>
 </html>
