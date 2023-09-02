@@ -1,6 +1,7 @@
 const express = require('express');
 const http = require('http');
 const socketIo = require('socket.io');
+const mqtt = require('mqtt'); // Use a biblioteca MQTT
 
 const app = express();
 const server = http.createServer(app);
@@ -11,21 +12,26 @@ app.get('/', (req, res) => {
   res.sendFile(__dirname + '/index.html');
 });
 
-// Manipulador de eventos de conexão
 io.on('connection', (socket) => {
   console.log('Um usuário se conectou');
 
-  // Manipulador para o evento personalizado "chat message"
-  socket.on('chat message', (msg) => {
-    console.log('Mensagem recebida: ' + msg);
+  // Conectar-se ao servidor MQTT
+  const client = mqtt.connect('mqtt://100.68.13.36');
 
-    // Enviar a mensagem para todos os clientes, incluindo o remetente
-    io.emit('chat message', msg);
+  // Subscrever-se a um tópico MQTT
+  client.subscribe('esp32');
+
+  // Manipulador para receber mensagens do MQTT e enviá-las para o cliente via Socket.io
+  client.on('message', (topic, message) => {
+    const payload = message.toString();
+    console.log('Mensagem recebida do MQTT:', payload);
+    io.emit('chat message', payload);
   });
 
-  // Manipulador de eventos de desconexão
   socket.on('disconnect', () => {
     console.log('Um usuário se desconectou');
+    // Desconectar-se do servidor MQTT quando um cliente se desconectar
+    client.end();
   });
 });
 
