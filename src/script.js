@@ -15,11 +15,25 @@ app.get('/', (req, res) => {
 io.on('connection', (socket) => {
   console.log('Um usuário se conectou');
 
-  // Conectar-se ao servidor MQTT
-  const client = mqtt.connect('mqtt://100.68.13.36');
+  // Conectar-se ao servidor MQTT com nome de usuário e senha
+  const client = mqtt.connect('mqtt://100.68.13.36', {
+    username: 'gustavo',
+    password: '3141516'
+  });
 
+  client.on('connect', () => {
+    console.log('Conexão MQTT estabelecida com sucesso');
+  });
+
+  // Manipulador para lidar com erros de conexão MQTT
+  client.on('error', (error) => {
+    console.error('Erro de conexão MQTT:', error.message);
+    io.emit('chat message', 'Erro de conexão MQTT: ' + error.message);
+    // Você pode tomar medidas adicionais aqui, como tentar reconectar ou notificar o usuário
+  });
+  
   // Subscrever-se a um tópico MQTT
-  client.subscribe('esp32');
+  client.subscribe('esp32_data');
 
   // Manipulador para receber mensagens do MQTT e enviá-las para o cliente via Socket.io
   client.on('message', (topic, message) => {

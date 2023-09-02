@@ -1,35 +1,78 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Socket.IO Chat</title>
+  <title>Gráfico de Força x Tempo (Dinâmico)</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="/socket.io/socket.io.js"></script>
 </head>
 <body>
-  <ul id="messages"></ul>
-  <form id="form" action="">
-    <input id="input" autocomplete="off" /><button>Enviar</button>
-  </form>
+  <canvas id="lineChart" width="400" height="200"></canvas>
 
-  <script src="/socket.io/socket.io.js"></script>
   <script>
+    const ctx = document.getElementById('lineChart').getContext('2d');
+
+    // Crie um array vazio para armazenar os dados iniciais
+    const dadosForca = [];
+    const dadosTempo = [];
+    const quantidadePontos = 10;
+
     const socket = io();
+    // Crie um gráfico vazio com dados iniciais
+    const data = {
+      labels: dadosTempo,
+      datasets: [
+        {
+          label: 'Força',
+          data: dadosForca,
+          borderColor: 'blue',
+          borderWidth: 2,
+          fill: false,
+        },
+      ],
+    };
 
-    // Manipulador para o formulário de envio
-    document.getElementById('form').addEventListener('submit', (e) => {
-      e.preventDefault();
-      const input = document.getElementById('input');
-      const message = input.value;
-      socket.emit('chat message', message);
-      input.value = '';
-      return false;
+    const lineChart = new Chart(ctx, {
+      type: 'line',
+      data: data,
+      options: {
+        scales: {
+          x: {
+            type: 'linear',
+            position: 'bottom',
+            title: {
+              display: true,
+              text: 'Tempo',
+            },
+          },
+          y: {
+            beginAtZero: true,
+            title: {
+              display: true,
+              text: 'Força',
+            },
+          },
+        },
+      },
     });
 
-    // Manipulador para o evento "chat message"
-    socket.on('chat message', (msg) => {
-      const messages = document.getElementById('messages');
-      const li = document.createElement('li');
-      li.textContent = msg;
-      messages.appendChild(li);
+    // Função para gerar dados aleatórios e atualizar o gráfico
+    function atualizarGrafico(novoValor) {
+      const forcaAleatoria = Math.floor(Math.random() * 100); // Força aleatória entre 0 e 100
+      const tempo = dadosTempo.length; // Próximo valor de tempo
+
+      console.log(novoValor)
+
+      dadosForca.push(novoValor);
+      dadosTempo.push(tempo);
+
+      // Atualize o gráfico com os novos dados
+      lineChart.update();
+    }
+
+    socket.on('chat message', (forca) => {
+      atualizarGrafico(forca)
     });
+    // Atualize o gráfico a cada segundo (1000 milissegundos)
   </script>
 </body>
 </html>
