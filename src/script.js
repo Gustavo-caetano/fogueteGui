@@ -14,6 +14,7 @@ app.get('/', (req, res) => {
 app.post('/:peso',(req, res)=> {
   const Peso = req.params.peso;
 
+  console.log("recebido: "+Peso)
   io.emit('chat message',Peso.toString())
   res.send(`Recebido o valor "peso" da URL: ${Peso}`);
 })
