@@ -15,7 +15,7 @@ app.post('/:peso',(req, res)=> {
   const Peso = req.params.peso;
 
   io.emit('chat message',Peso.toString())
-  res.send(`Recebido o valor "id" da URL: ${peso}`);
+  res.send(`Recebido o valor "peso" da URL: ${peso}`);
 })
 
 io.on('connection', (socket) => {
